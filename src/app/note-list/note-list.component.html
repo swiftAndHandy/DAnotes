@@ -132,9 +132,8 @@
             </button>
         </div>
     </div>
-    <div>
-        
-        @for (note of noteList; track note) {
+    <div>        
+        @for (note of getList('regular'); track note) {
             <app-note [note]="note"></app-note>
           }
     </div>
