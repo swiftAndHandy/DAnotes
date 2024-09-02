@@ -12,44 +12,49 @@ import { CommonModule } from '@angular/common';
   styleUrl: './note.component.scss'
 })
 export class NoteComponent {
-  @Input() note!:Note;
+  @Input() note!: Note;
   edit = false;
   hovered = false;
-  
-  constructor(private noteService: NoteListService){}
 
-  changeMarkedStatus(){
+  constructor(private noteService: NoteListService) { }
+
+  changeMarkedStatus() {
     this.note.marked = !this.note.marked;
+    this.saveNote()
   }
 
-  deleteHovered(){
-    if(!this.edit){
+  deleteHovered() {
+    if (!this.edit) {
       this.hovered = false;
     }
   }
 
-  openEdit(){
+  openEdit() {
     this.edit = true;
   }
 
-  closeEdit(){
+  closeEdit() {
     this.edit = false;
     this.saveNote();
   }
 
-  moveToTrash(){
-    this.note.type = 'trash';
+  moveToTrash() {
+    if (this.note.id) {
+      this.noteService.deleteNote(this.note, 'delete');
+      this.note.status = 'trashed';
+      this.noteService.addNote(this.note, 'trashed');
+    }
   }
 
-  moveToNotes(){
-    this.note.type = 'note';
+  moveToNotes() {
+    this.note.status = 'regular';
   }
 
-  deleteNote(){
-
+  deleteNote() {
+    this.noteService.deleteNote(this.note, 'delete');
   }
 
-  saveNote(){
-    
+  saveNote() {
+    this.noteService.updateNote(this.note);
   }
 }

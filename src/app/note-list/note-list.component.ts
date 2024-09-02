@@ -17,7 +17,7 @@ import { NoteComponent } from './note/note.component';
 export class NoteListComponent {
   noteList: Note[] = [];
   favFilter: "all" | "fav" = "all";
-  status: "notes" | "trash" = "notes";
+  status: "regular" | "trashed" = "regular";
 
   constructor(private noteService: NoteListService) {
 
@@ -37,10 +37,10 @@ export class NoteListComponent {
   }
 
   changeTrashStatus() {
-    if (this.status == "trash") {
-      this.status = "notes";
+    if (this.status == "trashed") {
+      this.status = "regular";
     } else {
-      this.status = "trash";
+      this.status = "trashed";
       this.favFilter = "all";
     }
   }

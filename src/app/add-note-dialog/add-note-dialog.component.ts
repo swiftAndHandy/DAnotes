@@ -25,6 +25,13 @@ export class AddNoteDialogComponent {
   }
 
   addNote(){
+    const note: Note = {
+      title: this.title,
+      content: this.description,
+      status: 'regular',
+      marked: false,
+    };
+    this.noteService.addNote(note);
     //beachte das closeDialog() zum Schluss kommt, denn es leert die Variablen
     this.closeDialog();
   }
