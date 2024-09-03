@@ -40,9 +40,9 @@ export class NoteComponent {
 
   moveToTrash() {
     if (this.note.id) {
-      this.noteService.deleteNote(this.note, 'delete');
       this.note.status = 'trashed';
       this.noteService.addNote(this.note, 'trashed');
+      this.noteService.deleteNote(this.note, 'delete');
     }
   }
 

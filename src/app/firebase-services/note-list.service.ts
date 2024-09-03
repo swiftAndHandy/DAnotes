@@ -36,10 +36,10 @@ export class NoteListService {
 
   setNotesObject(obj: any, id: string): Note {
     return {
-      'id': id || '',
+      'id': obj.id || '',
       'title': obj.title || '',
       'content': obj.content || '',
-      'status': obj.type || 'regular',
+      'status': obj.status || 'regular',
       'marked': obj.marked || false,
     }
   }
@@ -72,7 +72,7 @@ export class NoteListService {
 
   getCollectionIdFromNote(note: Note): string {
     if (note.status === 'trashed') {
-      return note.status;
+      return 'trash';
     } else {
       return 'notes';
     }
@@ -82,13 +82,13 @@ export class NoteListService {
     if (note.id) {
       let targetCollection: string;
       if (action === 'move' && note.status === 'regular') {
-        targetCollection = 'notes';
+        targetCollection = 'trash';
       } else if (action === 'move' && note.status === 'trashed') {
-        targetCollection = 'trash';
+        targetCollection = 'notes';
       } else if (action === 'delete' && note.status === 'trashed') {
-        targetCollection = 'trash';
+        targetCollection = 'notes';
       } else {
-        targetCollection= 'notes';
+        targetCollection = 'trash';
       }
       await deleteDoc(this.getSingleDocRef(targetCollection, note.id)).catch((err) => {
         console.warn(err);
@@ -103,6 +103,10 @@ export class NoteListService {
       console.warn(err);
     }).then((docRef) => {
       console.log(`Document written with ID ${docRef?.id}.`);
+      note.id = docRef?.id;
+      this.updateNote(note);
+      console.log(note.id);
+
     });
   }
 
@@ -118,7 +122,8 @@ export class NoteListService {
 
   getNoteAsJson(note: Note): object {
     return {
-      type: note.status,
+      id: note.id,
+      status: note.status,
       title: note.title,
       content: note.content,
       marked: note.marked,
