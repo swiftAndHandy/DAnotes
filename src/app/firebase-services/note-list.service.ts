@@ -78,19 +78,9 @@ export class NoteListService {
     }
   }
 
-  async deleteNote(note: Note, action: 'move' | 'delete') {
+  async deleteNote(note: Note, fromLocation: 'notes' | 'trash') {
     if (note.id) {
-      let targetCollection: string;
-      if (action === 'move' && note.status === 'regular') {
-        targetCollection = 'trash';
-      } else if (action === 'move' && note.status === 'trashed') {
-        targetCollection = 'notes';
-      } else if (action === 'delete' && note.status === 'trashed') {
-        targetCollection = 'notes';
-      } else {
-        targetCollection = 'trash';
-      }
-      await deleteDoc(this.getSingleDocRef(targetCollection, note.id)).catch((err) => {
+      await deleteDoc(this.getSingleDocRef(fromLocation, note.id)).catch((err) => {
         console.warn(err);
       });
     }

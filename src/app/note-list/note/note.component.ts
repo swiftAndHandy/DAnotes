@@ -42,16 +42,20 @@ export class NoteComponent {
     if (this.note.id) {
       this.note.status = 'trashed';
       this.noteService.addNote(this.note, 'trashed');
-      this.noteService.deleteNote(this.note, 'delete');
+      this.noteService.deleteNote(this.note, 'notes');
     }
   }
 
   moveToNotes() {
-    this.note.status = 'regular';
+    if (this.note.id) {
+      this.note.status = 'regular';
+      this.noteService.addNote(this.note, 'regular');
+      this.noteService.deleteNote(this.note, 'trash');
+    }
   }
 
   deleteNote() {
-    this.noteService.deleteNote(this.note, 'delete');
+    this.noteService.deleteNote(this.note, 'trash');
   }
 
   saveNote() {
