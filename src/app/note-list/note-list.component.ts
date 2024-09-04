@@ -26,7 +26,11 @@ export class NoteListComponent {
   getList(typeOfNotes: 'regular' | 'trashed' ): Note[] {
     switch (typeOfNotes) {
       case 'regular':
-        return this.noteService.regularNotes;
+        if (this.favFilter == 'all') {
+          return this.noteService.regularNotes;
+        } else {
+          return this.noteService.markedNotes;
+        }
       case 'trashed':
         return this.noteService.trashNotes;
     }

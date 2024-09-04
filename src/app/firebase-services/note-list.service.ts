@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { collectionData, Firestore, collection, onSnapshot, doc, addDoc, updateDoc, deleteDoc } from '@angular/fire/firestore';
+import { collectionData, Firestore, collection, onSnapshot, doc, addDoc, updateDoc, deleteDoc, query, where, orderBy, limit } from '@angular/fire/firestore';
 import { Note } from '../interfaces/note.interface';
 import { Observable } from 'rxjs';
 
@@ -10,9 +10,11 @@ export class NoteListService {
 
   trashNotes: Note[] = [];
   regularNotes: Note[] = [];
+  markedNotes: Note[] = [];
 
   unsubTrash;
   unsubNotes;
+  unsubMarkedNotes;
 
   items$;
 
@@ -22,6 +24,7 @@ export class NoteListService {
 
     this.unsubNotes = this.subNotesList();
     this.unsubTrash = this.subTrashList();
+    this.unsubMarkedNotes = this.subMarkedList();
 
     this.items$ = collectionData(this.getNotesRef());
 
@@ -31,10 +34,11 @@ export class NoteListService {
   ngOnDestroy() {
     this.unsubNotes();
     this.unsubTrash();
+    this.unsubMarkedNotes();
   }
 
 
-  setNotesObject(obj: any, id: string): Note {
+  setNotesObject(obj: any): Note {
     return {
       'id': obj.id || '',
       'title': obj.title || '',
@@ -48,16 +52,27 @@ export class NoteListService {
     return onSnapshot(this.getTrashRef(), (list) => {
       this.trashNotes = [];
       list.forEach(element => {
-        this.trashNotes.push(this.setNotesObject(element.data(), element.id));
+        this.trashNotes.push(this.setNotesObject(element.data()));
       })
     });
   }
 
   subNotesList() {
-    return onSnapshot(this.getNotesRef(), (list) => {
+    const q = query(this.getNotesRef(), orderBy("title"), limit(40));
+    return onSnapshot(q, (list) => {
       this.regularNotes = [];
       list.forEach(element => {
-        this.regularNotes.push(this.setNotesObject(element.data(), element.id));
+        this.regularNotes.push(this.setNotesObject(element.data()));
+      })
+    });
+  }
+
+  subMarkedList() {
+    const q = query(this.getNotesRef(), where("marked", "==", true), orderBy("title"), limit(40));
+    return onSnapshot(q, (list) => {
+      this.markedNotes = [];
+      list.forEach(element => {
+        this.markedNotes.push(this.setNotesObject(element.data()));
       })
     });
   }
